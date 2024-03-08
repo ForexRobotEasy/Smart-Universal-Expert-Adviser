@@ -1,0 +1,58 @@
+mql5
+//+------------------------------------------------------------------+
+//|                                          Smart Universal EA.mq5 |
+//|                      Copyright 2022, Forex Robot Easy Team       |
+//|                                 Developer's site: forexroboteasy.com |
+//+------------------------------------------------------------------+
+
+// Input parameters
+input double StopLoss = 100;     // Stop Loss level
+input double TakeProfit = 200;   // Take Profit level
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void OnTick()
+{
+   // Get the buy and sell buffers from the custom indicator
+   double buyBuffer[];
+   double sellBuffer[];
+   CopyBuffer(indicator_handle, 0, 0, 3, buyBuffer);
+   CopyBuffer(indicator_handle, 1, 0, 3, sellBuffer);
+
+   // Check for buy signal
+   if (buyBuffer[0] > 0)
+   {
+      // Place a buy order
+      double price = MarketInfo(Symbol(), MODE_ASK);
+      double stopLossLevel = price - StopLoss * Point;
+      double takeProfitLevel = price + TakeProfit * Point;
+      OrderSend(Symbol(), OP_BUY, 1, price, 0, stopLossLevel, takeProfitLevel);
+   }
+
+   // Check for sell signal
+   if (sellBuffer[0] > 0)
+   {
+      // Place a sell order
+      double price = MarketInfo(Symbol(), MODE_BID);
+      double stopLossLevel = price + StopLoss * Point;
+      double takeProfitLevel = price - TakeProfit * Point;
+      OrderSend(Symbol(), OP_SELL, 1, price, 0, stopLossLevel, takeProfitLevel);
+   }
+}
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void OnDeinit(const int reason)
+{
+   // Cleanup resources
+}
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void OnStart()
+{
+   // Initialization code
+}
